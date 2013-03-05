@@ -1,0 +1,50 @@
+10
+
+dir
+3
+https://e-kanna.googlecode.com/svn/kanna/res
+https://e-kanna.googlecode.com/svn
+
+
+
+2011-06-10T09:34:10.873075Z
+3
+takaku.anlab@gmail.com
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+77a341e6-e17b-36f6-cc69-ba95b6fb8622
+
+
+
+
+
+
+0
+
+drawable-hdpi
+dir
+
+drawable-ldpi
+dir
+
+drawable-mdpi
+dir
+
+layout
+dir
+
+values
+dir
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<ToggleButton
+	android:text="OFF"
+	android:id="@+id/gswitch"
+	android:layout_width="150sp"
+	android:layout_height="60sp">
+	</ToggleButton>
+
+<TextView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/hello"
+    android:id = "@+id/sensor_value"
+    />
+    <TextView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:text=""
+    android:id = "@+id/sokudo"
+    />
+</LinearLayout>

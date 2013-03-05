@@ -1,0 +1,184 @@
+package jp.anlab.kanna;
+
+import java.util.List;
+
+
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+import android.widget.ToggleButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+
+public class kannaactivity extends Activity {
+
+    private TextView mTvSensorValue1 = null;
+    private TextView mTvsokudo = null;
+    private ToggleButton toggleButton;
+	private boolean checked;
+	private float sensor_value;
+	private float goukei;
+	private float msokudo;
+	private int kaisu;
+	long start;
+	long stop;
+	long alltime;
+
+
+    // リスナの実装
+    private SensorEventListener listener = new SensorEventListener() {
+
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+	        if(checked == true){
+            // センサー値を画面に表示
+            displaysSensorValues(event.values);
+            goukei = goukei + Math.abs(sensor_value);
+            kaisu ++;
+
+
+	        }
+        }
+    };
+
+    /**
+     * センサー値を画面に表示
+     */
+    private void displaysSensorValues(float[] values) {
+
+        if (values.length >= 1) {
+            // 加速度センサーのy方向
+            mTvSensorValue1.setText(String.valueOf(Math.abs(values[1])));
+            sensor_value = values[1];
+        }
+
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
+        mTvSensorValue1 = (TextView) findViewById(R.id.sensor_value);
+        mTvsokudo = (TextView) findViewById(R.id.sokudo);
+
+        toggleButton = (ToggleButton) findViewById(R.id.gswitch);
+
+     // ToggleButton が On のときのテキストを設定
+        toggleButton.setTextOn("終了！");
+        // ToggleButton が Off のときのテキストを設定
+        toggleButton.setTextOff("かんな掛けを始める");
+
+        // ToggleButton をOFFに設定
+        toggleButton.setChecked(false);
+
+
+        //ToggleのCheckが変更したタイミングで呼び出されるリスナー
+        toggleButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //トグルキーが変更された際に呼び出される
+            	// ToggleButton が On かどうかを取得
+            	checked = toggleButton.isChecked();
+            	if (checked  == true ){
+                	kaisu = 0;
+                	goukei = 0;
+                	start= 0;
+                	stop = 0;
+        	    start = System.currentTimeMillis();
+            	}
+
+
+            	if (checked  == false ){
+        	    stop = System.currentTimeMillis();
+        	    alltime = (stop - start)/1000 ;
+        	    if(alltime == 0){
+        	    	alltime = 1;
+        	    }
+        	    msokudo = (goukei/ kaisu)*alltime *1000 ;
+        	    int seisu = (int)msokudo;
+            	mTvsokudo.setText(
+            			"\nあなたのかんな掛けの速度は\n"
+            			+String.valueOf(seisu)+"mm/s"
+            			+"\nです");
+
+
+               	}
+            }
+        });
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // センサーの初期化
+        initSensor();
+    }
+
+    /**
+     * センサーの初期化
+     */
+    private void initSensor() {
+
+        // センサーマネージャの取得
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        // 値を取得するセンサーの種類
+        int sensorType = Sensor.TYPE_ACCELEROMETER;
+
+        // 値を取得する頻度
+        int sensorDelay = SensorManager.SENSOR_DELAY_FASTEST;
+
+        // センサーのリストを取得
+        List<Sensor> list = sensorManager.getSensorList(sensorType);
+
+        // センサーにリスナを登録
+        for (Sensor sensor : list) {
+            if (sensor.getType() == sensorType) {
+                sensorManager.registerListener(listener, sensor, sensorDelay);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        ((SensorManager) getSystemService(Context.SENSOR_SERVICE)).unregisterListener(listener);
+    }
+
+    public class Timing {
+    	  public Timing() {}
+    	  public void doSomething() {
+    	    // なにか作業をする
+    	    // ここでは、単純に3秒間スリープするだけ
+    	    try {
+    	      Thread.sleep(3000);
+    	    } catch (InterruptedException e) {
+    	      e.printStackTrace();
+    	    }
+    	  }
+    	  public void main(String[] args) {
+    	    start = System.currentTimeMillis();
+    	    Timing timing = new Timing();
+    	    timing.doSomething();    // メソッドを呼び出して、何か時間のかかる作業をする
+    	    long stop = System.currentTimeMillis();
+    	    System.out.println("実行にかかった時間は " + (stop - start) + " ミリ秒です。");
+    	  }
+    	}
+
+
+}
